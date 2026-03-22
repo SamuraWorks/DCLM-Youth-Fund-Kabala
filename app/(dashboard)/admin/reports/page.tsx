@@ -59,19 +59,18 @@ export default async function ReportsPage() {
 
   // Summary stats
   const transparencyMonths = MONTHS.slice(2, currentMonth + 1) // March to current month
-  const completedMonthsCount = Math.max(0, currentMonth - 2) // Months before current month, starting from March
   const totalCollected = contributionsList.reduce((sum: number, c: any) => sum + Number(c.monthly_amount) + Number(c.extra_amount), 0)
   
   const monthlyTarget = membersList.length * 50
-  const expectedYTD = membersList.length * completedMonthsCount * 50
+  const targetUpToNow = membersList.length * transparencyMonths.length * 50
   const expectedYearly = membersList.length * 10 * 50 // March to December = 10 months
   
   const fullyPaidMembers = memberContributions.filter(
     m => m.monthsData.every(md => md.paid)
   ).length
   
-  // Use YTD for the collection rate comparisons
-  const expectedCollection = expectedYTD > 0 ? expectedYTD : monthlyTarget 
+  // Use Target Up To Now for the collection rate comparisons
+  const expectedCollection = targetUpToNow > 0 ? targetUpToNow : monthlyTarget 
 
   return (
     <div className="space-y-6">
@@ -108,7 +107,7 @@ export default async function ReportsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{expectedYTD.toLocaleString()} Le</div>
+            <div className="text-2xl font-bold">{targetUpToNow.toLocaleString()} Le</div>
             <div className="mt-1 space-y-1">
               <p className="text-xs text-muted-foreground">
                 <span className="font-medium text-foreground">{monthlyTarget.toLocaleString()} Le</span> Monthly Target
@@ -117,7 +116,7 @@ export default async function ReportsPage() {
                 <span className="font-medium text-foreground">{expectedYearly.toLocaleString()} Le</span> Yearly Minimum
               </p>
               <p className="text-[10px] text-muted-foreground italic border-t pt-1 mt-1">
-                YTD covers {completedMonthsCount} full month(s) since March
+                Target up to {transparencyMonths[transparencyMonths.length - 1]} (since March)
               </p>
             </div>
           </CardContent>
