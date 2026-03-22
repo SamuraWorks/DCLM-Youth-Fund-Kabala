@@ -39,6 +39,14 @@ export default async function ReportsPage() {
     creator: Member 
   })[]
 
+  // Summary stats
+  const transparencyMonths = MONTHS.slice(2, currentMonth + 1) // March to current month
+  const totalCollected = contributionsList.reduce((sum: number, c: any) => sum + Number(c.monthly_amount) + Number(c.extra_amount), 0)
+  
+  const monthlyTarget = membersList.length * 50
+  const targetUpToNow = membersList.length * transparencyMonths.length * 50
+  const expectedYearly = membersList.length * 10 * 50 // March to December = 10 months
+
   // Build member contribution matrix
   const memberContributions = membersList.map(member => {
     const memberContribs = contributionsList.filter(c => c.member_id === member.id)
@@ -57,14 +65,6 @@ export default async function ReportsPage() {
     }
   })
 
-  // Summary stats
-  const transparencyMonths = MONTHS.slice(2, currentMonth + 1) // March to current month
-  const totalCollected = contributionsList.reduce((sum: number, c: any) => sum + Number(c.monthly_amount) + Number(c.extra_amount), 0)
-  
-  const monthlyTarget = membersList.length * 50
-  const targetUpToNow = membersList.length * transparencyMonths.length * 50
-  const expectedYearly = membersList.length * 10 * 50 // March to December = 10 months
-  
   const fullyPaidMembers = memberContributions.filter(
     m => m.monthsData.every(md => md.paid)
   ).length
