@@ -48,7 +48,7 @@ DROP POLICY IF EXISTS "Authorized roles can create notifications" ON public.noti
 CREATE POLICY "Authorized roles can create notifications" 
 ON public.notifications FOR INSERT TO authenticated 
 WITH CHECK (
-  (auth.jwt() ->> 'email') IN ('samuel540wisesamura@gmail.com', 'paulannehk@gmail.com', 'princessconteh673@gmail.com')
+  (auth.jwt() ->> 'email') IN ('admin1@dclm-youth.org', 'admin2@dclm-youth.org', 'admin3@dclm-youth.org')
   OR 
   EXISTS (SELECT 1 FROM public.members WHERE user_id = auth.uid() AND role IN ('admin', 'treasurer', 'youth_coordinator'))
 );

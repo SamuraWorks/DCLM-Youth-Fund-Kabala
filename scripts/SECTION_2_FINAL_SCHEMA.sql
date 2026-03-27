@@ -43,7 +43,7 @@ TO authenticated
 WITH CHECK (
   member_id IN (SELECT id FROM public.members WHERE user_id = auth.uid()) OR
   (auth.jwt() ->> 'email') IN (
-      'samuel540wisesamura@gmail.com', 'paulannehk@gmail.com', 'princessconteh673@gmail.com', 'jonathanksenessie@gmail.com'
+      'admin1@dclm-youth.org', 'admin2@dclm-youth.org', 'admin3@dclm-youth.org', 'coordinator@dclm-youth.org'
   )
 );
 
@@ -56,7 +56,7 @@ USING (
   verified = TRUE OR 
   member_id IN (SELECT id FROM public.members WHERE user_id = auth.uid()) OR
   (auth.jwt() ->> 'email') IN (
-      'samuel540wisesamura@gmail.com', 'paulannehk@gmail.com', 'princessconteh673@gmail.com', 'jonathanksenessie@gmail.com'
+      'admin1@dclm-youth.org', 'admin2@dclm-youth.org', 'admin3@dclm-youth.org', 'coordinator@dclm-youth.org'
   )
 );
 
@@ -64,17 +64,17 @@ USING (
 -- Use a block to update if exists or insert if not
 DO $$
 BEGIN
-  IF EXISTS (SELECT 1 FROM public.members WHERE email = 'jonathanksenessie@gmail.com') THEN
+  IF EXISTS (SELECT 1 FROM public.members WHERE email = 'coordinator@dclm-youth.org') THEN
     UPDATE public.members 
     SET role = 'youth_coordinator', status = 'approved'
-    WHERE email = 'jonathanksenessie@gmail.com';
+    WHERE email = 'coordinator@dclm-youth.org';
   ELSE
     INSERT INTO public.members (id, user_id, full_name, email, phone, role, status, joined_date)
     VALUES (
       gen_random_uuid(),
       NULL,
       'Jonathan K Senessie',
-      'jonathanksenessie@gmail.com',
+      'coordinator@dclm-youth.org',
       'N/A', -- Fixed: added phone to satisfy NOT NULL constraint
       'youth_coordinator',
       'approved',

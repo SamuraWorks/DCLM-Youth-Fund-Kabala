@@ -10,7 +10,11 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { buildExportRows, generateExcelBuffer } from '@/lib/safe-export'
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const yearParam = searchParams.get('year')
+  const yearInt = yearParam ? parseInt(yearParam) : new Date().getFullYear()
+
   const supabase = await createClient()
 
   // Auth check — read only, no mutations
@@ -25,7 +29,7 @@ export async function GET() {
     .eq('user_id', user.id)
     .maybeSingle()
 
-  const ADMIN_EMAILS = ['samuel540wisesamura@gmail.com', 'paulannehk@gmail.com', 'princessconteh673@gmail.com']
+  const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase())
   const isAdminByEmail = user.email && ADMIN_EMAILS.includes(user.email.toLowerCase())
   const effectiveRole = isAdminByEmail ? 'admin' : member?.role
 
@@ -37,6 +41,7 @@ export async function GET() {
   const { data: contributions, error } = await supabase
     .from('contributions')
     .select('*, member:members!contributions_member_id_fkey(full_name, email)')
+    .eq('year', yearInt)
     .order('created_at', { ascending: true })
 
   if (error) {
@@ -48,7 +53,7 @@ export async function GET() {
   const rows = buildExportRows(contributions ?? [])
   const buffer = generateExcelBuffer(rows)
 
-  const filename = `DLKYF_Contributions_${new Date().toISOString().split('T')[0]}.xlsx`
+  const filename = `DLKYF_Contributions_${yearInt}_${new Date().toISOString().split('T')[0]}.xlsx`
 
   return new NextResponse(new Uint8Array(buffer), {
     headers: {

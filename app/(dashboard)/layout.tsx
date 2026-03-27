@@ -32,14 +32,10 @@ export default async function DashboardLayout({
   if (!member) {
     console.log('DashboardLayout trace - No member found, attempting salvage...')
     // Auto-salvage: create member row if trigger failed
-    const adminEmails = [
-      'samuel540wisesamura@gmail.com',
-      'paulannehk@gmail.com',
-      'princessconteh673@gmail.com'
-    ]
-    const coordinatorEmails = ['jonathanksenessie@gmail.com']
-    const isAdminEmail = adminEmails.includes(user.email || '')
-    const isCoordinatorEmail = coordinatorEmails.includes(user.email || '')
+    const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase())
+    const coordinatorEmails = (process.env.COORDINATOR_EMAILS || '').split(',').map(e => e.trim().toLowerCase())
+    const isAdminEmail = adminEmails.includes((user.email || '').toLowerCase())
+    const isCoordinatorEmail = coordinatorEmails.includes((user.email || '').toLowerCase())
     
     const { data: newMember, error: insertError } = await (await createAdminClient()).from('members').insert({
       user_id: user.id,

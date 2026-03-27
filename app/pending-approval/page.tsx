@@ -43,14 +43,10 @@ export default async function PendingApprovalPage() {
         .single()
       member = linkedMember
     } else {
-      const adminEmails = [
-        'samuel540wisesamura@gmail.com',
-        'paulannehk@gmail.com',
-        'princessconteh673@gmail.com',
-        'jonathanksenessie@gmail.com' // Coordinator auto-approval
-      ]
-      const isAdminEmail = adminEmails.includes(user.email || '')
-      const isCoordinator = user.email === 'jonathanksenessie@gmail.com'
+      const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase())
+      const coordinatorEmails = (process.env.COORDINATOR_EMAILS || '').split(',').map(e => e.trim().toLowerCase())
+      const isAdminEmail = adminEmails.includes((user.email || '').toLowerCase())
+      const isCoordinator = coordinatorEmails.includes((user.email || '').toLowerCase())
 
       const { data: newMember } = await supabase.from('members').insert({
         user_id: user.id,

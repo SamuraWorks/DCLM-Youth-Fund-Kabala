@@ -46,24 +46,24 @@ CREATE POLICY "Users can insert their own profile" ON public.members
 CREATE POLICY "Admins can view all" ON public.members 
   FOR SELECT TO authenticated USING (
     (auth.jwt() ->> 'email') IN (
-      'samuel540wisesamura@gmail.com',
-      'paulannehk@gmail.com',
-      'princessconteh673@gmail.com'
+      'admin1@dclm-youth.org',
+      'admin2@dclm-youth.org',
+      'admin3@dclm-youth.org'
     )
   );
 
 CREATE POLICY "Admins can update all" ON public.members 
   FOR UPDATE TO authenticated USING (
     (auth.jwt() ->> 'email') IN (
-      'samuel540wisesamura@gmail.com',
-      'paulannehk@gmail.com',
-      'princessconteh673@gmail.com'
+      'admin1@dclm-youth.org',
+      'admin2@dclm-youth.org',
+      'admin3@dclm-youth.org'
     )
   ) WITH CHECK (
     (auth.jwt() ->> 'email') IN (
-      'samuel540wisesamura@gmail.com',
-      'paulannehk@gmail.com',
-      'princessconteh673@gmail.com'
+      'admin1@dclm-youth.org',
+      'admin2@dclm-youth.org',
+      'admin3@dclm-youth.org'
     )
   );
 
@@ -81,9 +81,9 @@ CREATE POLICY "Members can view their own contributions" ON public.contributions
 CREATE POLICY "Admins can view and update all contributions" ON public.contributions 
   FOR ALL TO authenticated USING (
     (auth.jwt() ->> 'email') IN (
-      'samuel540wisesamura@gmail.com',
-      'paulannehk@gmail.com',
-      'princessconteh673@gmail.com'
+      'admin1@dclm-youth.org',
+      'admin2@dclm-youth.org',
+      'admin3@dclm-youth.org'
     )
   );
 
@@ -96,18 +96,18 @@ DROP POLICY IF EXISTS "Members can view ledger" ON public.ledger_entries;
 CREATE POLICY "Admins can manage ledger" ON public.ledger_entries 
   FOR ALL TO authenticated USING (
     (auth.jwt() ->> 'email') IN (
-      'samuel540wisesamura@gmail.com',
-      'paulannehk@gmail.com',
-      'princessconteh673@gmail.com'
+      'admin1@dclm-youth.org',
+      'admin2@dclm-youth.org',
+      'admin3@dclm-youth.org'
     )
   );
 
 CREATE POLICY "Members can view ledger" ON public.ledger_entries 
   FOR SELECT TO authenticated USING (
     (auth.jwt() ->> 'email') IN (
-      'samuel540wisesamura@gmail.com',
-      'paulannehk@gmail.com',
-      'princessconteh673@gmail.com'
+      'admin1@dclm-youth.org',
+      'admin2@dclm-youth.org',
+      'admin3@dclm-youth.org'
     ) OR
     EXISTS (SELECT 1 FROM public.members WHERE user_id = auth.uid() AND status = 'approved')
   );
@@ -121,18 +121,18 @@ DROP POLICY IF EXISTS "Members can view balances" ON public.fund_balances;
 CREATE POLICY "Admins can manage balances" ON public.fund_balances 
   FOR ALL TO authenticated USING (
     (auth.jwt() ->> 'email') IN (
-      'samuel540wisesamura@gmail.com',
-      'paulannehk@gmail.com',
-      'princessconteh673@gmail.com'
+      'admin1@dclm-youth.org',
+      'admin2@dclm-youth.org',
+      'admin3@dclm-youth.org'
     )
   );
 
 CREATE POLICY "Members can view balances" ON public.fund_balances 
   FOR SELECT TO authenticated USING (
     (auth.jwt() ->> 'email') IN (
-      'samuel540wisesamura@gmail.com',
-      'paulannehk@gmail.com',
-      'princessconteh673@gmail.com'
+      'admin1@dclm-youth.org',
+      'admin2@dclm-youth.org',
+      'admin3@dclm-youth.org'
     ) OR
     EXISTS (SELECT 1 FROM public.members WHERE user_id = auth.uid() AND status = 'approved')
   );
@@ -146,9 +146,9 @@ DROP POLICY IF EXISTS "Members can view and update their own notifications" ON p
 CREATE POLICY "Admins can create notifications" ON public.notifications 
   FOR INSERT TO authenticated WITH CHECK (
     (auth.jwt() ->> 'email') IN (
-      'samuel540wisesamura@gmail.com',
-      'paulannehk@gmail.com',
-      'princessconteh673@gmail.com'
+      'admin1@dclm-youth.org',
+      'admin2@dclm-youth.org',
+      'admin3@dclm-youth.org'
     )
   );
 

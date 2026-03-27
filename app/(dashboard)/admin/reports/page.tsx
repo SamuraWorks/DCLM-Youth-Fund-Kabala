@@ -5,11 +5,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { MONTHS } from '@/lib/types'
 import type { Contribution, Member, Transaction, FundCategory } from '@/lib/types'
 
-export default async function ReportsPage() {
+export default async function ReportsPage({ searchParams }: { searchParams: Promise<{ year?: string }> }) {
   const supabase = await createClient()
+  const resolvedParams = await searchParams
 
-  const currentYear = new Date().getFullYear()
-  const currentMonth = new Date().getMonth()
+  const actualYear = new Date().getFullYear()
+  const currentYear = resolvedParams.year ? parseInt(resolvedParams.year) : actualYear
+  const currentMonth = currentYear < actualYear ? 11 : new Date().getMonth()
 
   // Get all approved members
   const { data: members } = await supabase
@@ -40,12 +42,17 @@ export default async function ReportsPage() {
   })[]
 
   // Summary stats
-  const transparencyMonths = MONTHS.slice(2, currentMonth + 1) // March to current month
+  // For 2026, we start in March (index 2). For future years, start in January (index 0).
+  const startMonthIndex = currentYear === 2026 ? 2 : 0
+  const transparencyMonths = MONTHS.slice(startMonthIndex, currentMonth + 1)
   const totalCollected = contributionsList.reduce((sum: number, c: any) => sum + Number(c.monthly_amount) + Number(c.extra_amount), 0)
   
   const monthlyTarget = membersList.length * 50
   const targetUpToNow = membersList.length * transparencyMonths.length * 50
-  const expectedYearly = membersList.length * 10 * 50 // March to December = 10 months
+  
+  // For 2026, expected yearly is 10 months (March-Dec). For future years, it's 12 months.
+  const expectedMonthsInYear = currentYear === 2026 ? 10 : 12
+  const expectedYearly = membersList.length * expectedMonthsInYear * 50
 
   // Build member contribution matrix
   const memberContributions = membersList.map(member => {
@@ -57,11 +64,14 @@ export default async function ReportsPage() {
       member,
       paidMonths,
       totalPaid,
-      monthsData: transparencyMonths.map(month => ({
-        month,
-        paid: paidMonths.includes(month),
-        amount: (Number(memberContribs.find(c => c.month === month)?.monthly_amount) || 0) + (Number(memberContribs.find(c => c.month === month)?.extra_amount) || 0),
-      })),
+      monthsData: transparencyMonths.map(month => {
+        const monthContribs = memberContribs.filter(c => c.month === month);
+        return {
+          month,
+          paid: monthContribs.length > 0,
+          amount: monthContribs.reduce((sum, c) => sum + Number(c.monthly_amount) + Number(c.extra_amount), 0),
+        }
+      }),
     }
   })
 
@@ -74,17 +84,30 @@ export default async function ReportsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Reports & Export</h1>
           <p className="text-muted-foreground">Financial reports, member contribution status, and data export</p>
         </div>
-        <a
-          href="/api/export-excel"
-          className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground shadow transition hover:bg-accent/90"
-        >
-          ⬇ Download Clean Excel
-        </a>
+        <div className="flex items-center gap-2">
+          <div className="flex bg-muted rounded-lg p-1">
+            {Array.from({ length: Math.max(1, actualYear - 2026 + 1) }, (_, i) => 2026 + i).map(y => (
+              <a 
+                key={y} 
+                href={`?year=${y}`} 
+                className={`px-3 py-1.5 text-sm rounded-md transition ${currentYear === y ? 'bg-background shadow font-medium text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                {y}
+              </a>
+            ))}
+          </div>
+          <a
+            href={`/api/export-excel?year=${currentYear}`}
+            className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground shadow transition hover:bg-accent/90"
+          >
+            ⬇ Download Excel
+          </a>
+        </div>
       </div>
 
       {/* Summary Stats */}
@@ -116,7 +139,7 @@ export default async function ReportsPage() {
                 <span className="font-medium text-foreground">{expectedYearly.toLocaleString()} Le</span> Yearly Minimum
               </p>
               <p className="text-[10px] text-muted-foreground italic border-t pt-1 mt-1">
-                Target up to {transparencyMonths[transparencyMonths.length - 1]} (since March)
+                Target up to {transparencyMonths[transparencyMonths.length - 1] || 'None'} (since {MONTHS[startMonthIndex]})
               </p>
             </div>
           </CardContent>

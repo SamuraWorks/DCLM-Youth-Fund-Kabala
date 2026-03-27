@@ -21,9 +21,9 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 
 async function resetMembers() {
   const ADMIN_EMAILS = [
-    'samuel540wisesamura@gmail.com',
-    'paulannehk@gmail.com',
-    'princessconteh673@gmail.com'
+    'admin1@dclm-youth.org',
+    'admin2@dclm-youth.org',
+    'admin3@dclm-youth.org'
   ]
 
   console.log('Fetching all users from auth.users...')

@@ -37,16 +37,6 @@ export default function SignUpPage() {
       return
     }
 
-    const ADMIN_EMAILS = [
-      'samuel540wisesamura@gmail.com',
-      'paulannehk@gmail.com',
-      'princessconteh673@gmail.com'
-    ]
-
-    if (ADMIN_EMAILS.includes(email.toLowerCase())) {
-      setError('Admins cannot sign up via this form. Please use the login page.')
-      return
-    }
 
     setIsLoading(true)
 

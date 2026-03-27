@@ -4,10 +4,10 @@
 UPDATE public.members 
 SET role = 'admin', status = 'approved' 
 WHERE email IN (
-  'samuel540wisesamura@gmail.com',
-  'paulannehk@gmail.com'
+  'admin1@dclm-youth.org',
+  'admin2@dclm-youth.org'
 );
 
 -- Verify: should return 2 rows with role = admin
 SELECT id, full_name, email, role, status FROM public.members 
-WHERE email IN ('samuel540wisesamura@gmail.com', 'paulannehk@gmail.com');
+WHERE email IN ('admin1@dclm-youth.org', 'admin2@dclm-youth.org');

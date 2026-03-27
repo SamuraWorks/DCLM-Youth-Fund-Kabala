@@ -20,19 +20,19 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 
 const ADMINS = [
   {
-    name: 'Samuel Samura',
-    email: 'samuel540wisesamura@gmail.com',
-    password: 'S@muR4#9xL!27',
+    name: process.env.SEED_ADMIN_NAME_1 || 'Admin 1',
+    email: process.env.SEED_ADMIN_EMAIL_1 || 'admin1@example.com',
+    password: process.env.SEED_ADMIN_PASSWORD_1 || 'TempPass1!',
   },
   {
-    name: 'Paul Anneh Koroma',
-    email: 'paulannehk@gmail.com',
-    password: 'P@uL#83vK!2zX',
+    name: process.env.SEED_ADMIN_NAME_2 || 'Admin 2',
+    email: process.env.SEED_ADMIN_EMAIL_2 || 'admin2@example.com',
+    password: process.env.SEED_ADMIN_PASSWORD_2 || 'TempPass2!',
   },
   {
-    name: 'Princess Conteh',
-    email: 'princessconteh673@gmail.com',
-    password: 'Pr!nC3ss#7Lm@92',
+    name: process.env.SEED_ADMIN_NAME_3 || 'Admin 3',
+    email: process.env.SEED_ADMIN_EMAIL_3 || 'admin3@example.com',
+    password: process.env.SEED_ADMIN_PASSWORD_3 || 'TempPass3!',
   }
 ]
 

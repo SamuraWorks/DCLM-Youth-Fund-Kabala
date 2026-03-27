@@ -18,14 +18,14 @@ DROP POLICY IF EXISTS "Admins can update all" ON public.members;
 CREATE POLICY "Admins can view all members" ON public.members 
   FOR SELECT TO authenticated USING (
     (auth.jwt() ->> 'email') IN (
-      'samuel540wisesamura@gmail.com', 'paulannehk@gmail.com', 'princessconteh673@gmail.com'
+      'admin1@dclm-youth.org', 'admin2@dclm-youth.org', 'admin3@dclm-youth.org'
     )
   );
 
 CREATE POLICY "Admins can manage all members" ON public.members 
   FOR ALL TO authenticated USING (
     (auth.jwt() ->> 'email') IN (
-      'samuel540wisesamura@gmail.com', 'paulannehk@gmail.com', 'princessconteh673@gmail.com'
+      'admin1@dclm-youth.org', 'admin2@dclm-youth.org', 'admin3@dclm-youth.org'
     )
   );
 

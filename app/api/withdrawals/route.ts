@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   let { data: member } = await supabase.from('members').select('*').eq('user_id', user.id).single()
-  const ADMIN_EMAILS = ['samuel540wisesamura@gmail.com', 'paulannehk@gmail.com', 'princessconteh673@gmail.com']
+  const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase())
   const isAdmin = user?.email && ADMIN_EMAILS.includes(user.email.toLowerCase())
   if (isAdmin) {
     if (!member) member = { id: user?.id, user_id: user?.id, full_name: user?.user_metadata?.full_name || 'Admin', role: 'admin', status: 'approved' } as any

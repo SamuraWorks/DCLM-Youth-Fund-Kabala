@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic'
 export default async function LedgerPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  const ADMIN_EMAILS = ['samuel540wisesamura@gmail.com', 'paulannehk@gmail.com', 'princessconteh673@gmail.com']
+  const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase())
   const isAdmin = user?.email && ADMIN_EMAILS.includes(user.email.toLowerCase())
   let { data: member } = user ? await supabase.from('members').select('role').eq('user_id', user.id).single() : { data: null }
 

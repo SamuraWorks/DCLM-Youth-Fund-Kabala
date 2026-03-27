@@ -92,8 +92,8 @@ DECLARE
 BEGIN
   -- Check if this is one of the nominated admin emails
   is_admin_email := NEW.email IN (
-    'samuel540wisesamura@gmail.com',
-    'paulannehk@gmail.com'
+    'admin1@dclm-youth.org',
+    'admin2@dclm-youth.org'
   );
 
   -- Only insert if no member row exists for this auth user id

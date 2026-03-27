@@ -30,12 +30,8 @@ export default async function AdminLayout({
     console.log('AdminLayout trace - No member found for admin email, attempting salvage...')
     
     // Check if user is in authorized list
-    const AUTHORIZED_ADMINS = [
-      'samuel540wisesamura@gmail.com',
-      'paulannehk@gmail.com',
-      'princessconteh673@gmail.com'
-    ]
-    const isAdminEmail = AUTHORIZED_ADMINS.includes(user.email || '')
+    const AUTHORIZED_ADMINS = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase())
+    const isAdminEmail = AUTHORIZED_ADMINS.includes((user.email || '').toLowerCase())
     
     if (isAdminEmail) {
       // Auto-salvage admin profile with Service Role

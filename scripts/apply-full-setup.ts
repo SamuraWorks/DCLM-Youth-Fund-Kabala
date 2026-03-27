@@ -11,7 +11,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey)
 async function applyAuthSetup() {
   console.log('--- DCLM Youth Fund: Auth Setup ---')
   
-  const email = 'jonathanksenessie@gmail.com'
+  const email = 'coordinator@dclm-youth.org'
   const password = 'J0n@th4n#K$S3n!22'
   const fullName = 'Jonathan K Senessie'
 

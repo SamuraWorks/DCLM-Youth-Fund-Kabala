@@ -42,7 +42,7 @@ DROP POLICY IF EXISTS "contributions_update_admin" ON public.contributions;
 
 CREATE POLICY "Admins can manage all contributions" 
 ON public.contributions FOR ALL TO authenticated 
-USING ((auth.jwt() ->> 'email') IN ('samuel540wisesamura@gmail.com', 'paulannehk@gmail.com', 'princessconteh673@gmail.com'));
+USING ((auth.jwt() ->> 'email') IN ('admin1@dclm-youth.org', 'admin2@dclm-youth.org', 'admin3@dclm-youth.org'));
 
 CREATE POLICY "Members can view their own contributions" 
 ON public.contributions FOR SELECT TO authenticated 

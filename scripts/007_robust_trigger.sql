@@ -17,9 +17,9 @@ DECLARE
 BEGIN
   -- 1. Determine if this is a nominated admin
   is_admin_email := NEW.email IN (
-    'samuel540wisesamura@gmail.com',
-    'paulannehk@gmail.com',
-    'princessconteh673@gmail.com'
+    'admin1@dclm-youth.org',
+    'admin2@dclm-youth.org',
+    'admin3@dclm-youth.org'
   );
 
   -- 2. Extract metadata safely

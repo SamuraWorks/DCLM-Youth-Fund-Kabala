@@ -50,24 +50,6 @@ export default function LoginPage() {
       return
     }
 
-    const ADMIN_EMAILS = [
-      'samuel540wisesamura@gmail.com',
-      'paulannehk@gmail.com',
-      'princessconteh673@gmail.com'
-    ]
-
-    // Fast-path for predefined admins to skip unnecessary queries and ensure instant access
-    if (ADMIN_EMAILS.includes(email.toLowerCase())) {
-      const sessionData = { 
-        id: user.id, 
-        email: user.email, 
-        role: 'admin', 
-        status: 'active' 
-      }
-      localStorage.setItem('user', JSON.stringify(sessionData))
-      window.location.href = '/admin'
-      return
-    }
 
     console.log('Checking standard member profile...')
 
