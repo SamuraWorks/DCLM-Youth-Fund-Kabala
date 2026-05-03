@@ -6,10 +6,12 @@ dotenv.config({ path: '.env.local' })
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-if (!supabaseUrl || !supabaseServiceKey || supabaseUrl.includes('placeholder')) {
-  console.error('ERROR: Supabase credentials are missing or placeholders in .env.local')
+if (!supabaseUrl || !supabaseServiceKey) {
+  console.error('ERROR: Supabase credentials are missing in .env.local')
   process.exit(1)
 }
+
+console.log(`Using Supabase URL: ${supabaseUrl.substring(0, 15)}...`)
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
