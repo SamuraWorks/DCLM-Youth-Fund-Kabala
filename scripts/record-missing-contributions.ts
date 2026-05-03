@@ -23,7 +23,7 @@ const MARCH_DATA = [
   { name: 'Brima', amount: 50 },
   { name: 'James', amount: 60 },
   { name: 'John', amount: 50 },
-  { name: 'Hannah Faith', amount: 50 },
+  { name: 'Hannah Faith Kalma', amount: 50 },
   { name: 'Favour', amount: 50 },
   { name: 'Theresa', amount: 50 },
   { name: 'Abubakarr', amount: 50 },
