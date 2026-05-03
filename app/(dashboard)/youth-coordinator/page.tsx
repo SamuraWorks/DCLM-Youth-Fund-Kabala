@@ -27,7 +27,7 @@ export default async function YouthCoordinatorDashboard() {
   const { data: allYearContributions } = await supabase
     .from('contributions')
     .select('monthly_amount, extra_amount')
-    .eq('verified', true)
+    .eq('status', 'verified')
     .eq('year', currentYear)
   
   const totalCollected = (allYearContributions || []).reduce((sum: number, c: any) => sum + Number(c.monthly_amount) + Number(c.extra_amount), 0)

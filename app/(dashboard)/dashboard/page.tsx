@@ -46,11 +46,11 @@ export default async function MemberDashboardPage() {
 
   // Calculate stats
   const totalPaid = contributionsList
-    .filter(c => c.verified)
+    .filter(c => c.status === 'verified')
     .reduce((sum: number, c: any) => sum + Number(c.monthly_amount) + Number(c.extra_amount), 0)
 
   const paidMonths = contributionsList
-    .filter(c => c.verified)
+    .filter(c => c.status === 'verified')
     .map(c => c.month)
 
   // Start calculating unpaid months from March (index 2)
@@ -70,7 +70,7 @@ export default async function MemberDashboardPage() {
   const { data: allYearContributions } = await supabase
     .from('contributions')
     .select('monthly_amount, extra_amount')
-    .eq('verified', true)
+    .eq('status', 'verified')
     .eq('year', currentYear)
   
   const communityTotalCollected = (allYearContributions || []).reduce((sum, c) => sum + Number(c.monthly_amount) + Number(c.extra_amount), 0)

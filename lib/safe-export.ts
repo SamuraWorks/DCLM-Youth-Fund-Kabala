@@ -19,6 +19,7 @@ export interface SafeContributionRow {
   payment_method: string
   transaction_id: string
   date: string
+  verified_total: number
 }
 
 /**
@@ -26,12 +27,30 @@ export interface SafeContributionRow {
  * All formatting happens here — no mutation of original data.
  */
 export function buildExportRows(contributions: any[]): SafeContributionRow[] {
-  return contributions.map((c) => {
-    const monthly = Number(c.monthly_amount) || 0
-    // Safe fallback: if extra_amount is missing, derive it from total - 50 (minimum monthly)
-    const extra = c.extra_amount != null ? Number(c.extra_amount) : Math.max(0, (Number(c.total_amount) || 0) - 50)
-    const total = monthly + extra
+  // Compute verified totals per member
+  const verifiedTotals: Record<string, number> = {};
+  contributions.forEach((c) => {
+    const isVerified = c.status === 'verified';
+    if (isVerified) {
+      const memberId = c.member_id ?? c.member?.id ?? 'unknown';
+      const monthly = Number(c.monthly_amount) || 0;
+      const extra = Number(c.extra_amount) || 0;
+      const total = monthly + extra;
+      verifiedTotals[memberId] = (verifiedTotals[memberId] || 0) + total;
+    }
+  });
 
+  return contributions.map((c) => {
+    const isVerified = c.status === 'verified';
+    const isRejected = c.status === 'rejected';
+    
+    // If rejected, show 0 in the row totals as requested
+    const monthly = !isRejected ? (Number(c.monthly_amount) || 0) : 0;
+    const extra = !isRejected ? (Number(c.extra_amount) || 0) : 0;
+    const total = monthly + extra;
+    
+    const memberId = c.member_id ?? c.member?.id ?? 'unknown';
+    
     return {
       member_name: c.member?.full_name ?? c.member_name ?? 'Unknown',
       email: c.member?.email ?? c.email ?? '',
@@ -39,12 +58,13 @@ export function buildExportRows(contributions: any[]): SafeContributionRow[] {
       monthly_amount: monthly,
       extra_amount: extra,
       total_amount: total,
-      status: c.status ?? '',
+      status: (c.status ?? 'pending').charAt(0).toUpperCase() + (c.status ?? 'pending').slice(1),
       payment_method: (c.payment_method ?? '').replace(/_/g, ' '),
       transaction_id: c.payment_reference ?? c.id ?? '',
       date: c.created_at ? new Date(c.created_at).toLocaleDateString('en-GB') : '',
-    }
-  })
+      verified_total: verifiedTotals[memberId] ?? 0,
+    };
+  });
 }
 
 /**
@@ -64,6 +84,7 @@ export function generateExcelBuffer(rows: SafeContributionRow[]): Buffer {
     'Payment Method',
     'Transaction ID',
     'Date',
+    'Verified Total (Le)',
   ]
 
   const sheetData = [
@@ -79,6 +100,7 @@ export function generateExcelBuffer(rows: SafeContributionRow[]): Buffer {
       r.payment_method,
       r.transaction_id,
       r.date,
+      r.verified_total,
     ]),
   ]
 
@@ -97,6 +119,7 @@ export function generateExcelBuffer(rows: SafeContributionRow[]): Buffer {
     { wch: 18 }, // Payment Method
     { wch: 30 }, // Transaction ID
     { wch: 14 }, // Date
+    { wch: 22 }, // Verified Total
   ]
 
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Contributions')

@@ -35,8 +35,8 @@ export function TransparencyTable() {
         // Fetch all verified contributions for this year
         const { data: contribsData } = await supabase
           .from('contributions')
-          .select('id, member_id, month, year, monthly_amount, extra_amount, verified')
-          .eq('verified', true)
+          .select('id, member_id, month, year, monthly_amount, extra_amount, status')
+          .eq('status', 'verified')
           .eq('year', currentYear)
 
         if (membersData) setMembers(membersData)
@@ -122,7 +122,20 @@ export function TransparencyTable() {
                 ) : (
                   filteredMembers.map((member) => {
                     const memberContribs = contributionsByMember.get(member.id) || []
-                    const totalPaid = memberContribs.reduce((sum, c) => sum + Number(c.monthly_amount) + Number(c.extra_amount), 0)
+                    const totalPaid = (() => {
+        // Ensure each month is counted only once and only verified contributions are summed
+        const monthMap = new Map<string, number>();
+        memberContribs.forEach((c) => {
+          // Only verified contributions are summed
+          const isVerified = c.status === 'verified';
+          if (!isVerified) return;
+          const key = c.month;
+          const amount = Number(c.monthly_amount) + Number(c.extra_amount);
+          const existing = monthMap.get(key) ?? 0;
+          if (amount > existing) monthMap.set(key, amount);
+        });
+        return Array.from(monthMap.values()).reduce((sum, v) => sum + v, 0);
+      })();
 
                     return (
                       <TableRow key={member.id} className="hover:bg-muted/30 transition-colors">

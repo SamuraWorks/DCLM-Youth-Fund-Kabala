@@ -52,7 +52,7 @@ export default async function AdminDashboardPage() {
   const { data: yearContributions } = await supabase
     .from('contributions')
     .select('monthly_amount, extra_amount')
-    .eq('verified', true)
+    .eq('status', 'verified')
     .eq('year', currentYear)
 
   const totalCollected = (yearContributions || []).reduce((sum: number, c: any) => sum + Number(c.monthly_amount) + Number(c.extra_amount), 0)

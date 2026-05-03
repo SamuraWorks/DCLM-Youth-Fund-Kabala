@@ -24,7 +24,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
   const { data: contributions } = await supabase
     .from('contributions')
     .select('*')
-    .eq('verified', true)
+    .eq('status', 'verified')
     .eq('year', currentYear)
 
   // Get recent transactions
@@ -45,7 +45,9 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
   // For 2026, we start in March (index 2). For future years, start in January (index 0).
   const startMonthIndex = currentYear === 2026 ? 2 : 0
   const transparencyMonths = MONTHS.slice(startMonthIndex, currentMonth + 1)
-  const totalCollected = contributionsList.reduce((sum: number, c: any) => sum + Number(c.monthly_amount) + Number(c.extra_amount), 0)
+  const totalCollected = contributionsList
+    .filter(c => c.status === 'verified')
+    .reduce((sum: number, c: any) => sum + Number(c.monthly_amount) + Number(c.extra_amount), 0)
   
   const monthlyTarget = membersList.length * 50
   const targetUpToNow = membersList.length * transparencyMonths.length * 50
@@ -65,7 +67,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
       paidMonths,
       totalPaid,
       monthsData: transparencyMonths.map(month => {
-        const monthContribs = memberContribs.filter(c => c.month === month);
+        const monthContribs = memberContribs.filter(c => c.month === month && c.status === 'verified');
         return {
           month,
           paid: monthContribs.length > 0,
